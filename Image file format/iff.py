@@ -3,7 +3,7 @@
           
 #my own image format file
 
-# Чтобы наглядно можно было работать с нейронной сетью нужно уметь обрабатывать изображения. Но даже первое обращение к BMP, JPG, GIF, показывает, что хранение данных в этих форматах сделано непросто, или так описано, что понять это сложно. Чтобы нормально работать с ихображениями - попробую сам создать свой формат изображений (который в дальнейшем может быть) преобразован в формат медиа-файлов в целом.
+# Чтобы наглядно можно было работать с нейронной сетью нужно уметь обрабатывать изображения. Но даже первое обращение к BMP, JPG, GIF, показывает, что хранение данных в этих форматах сделано непросто, или так описано, что понять это сложно. Чтобы нормально работать с изображениями - попробую сам создать свой формат изображений (который в дальнейшем может быть) преобразован в формат медиа-файлов в целом.
 
 
 # Model
@@ -128,16 +128,71 @@ def paint_image(canvas_width = 500, canvas_height = 500):
   mainloop()
 
   
-def extract_image_from_painted_image():
-  pass
+def extract_image_from_painted_image(drawed_image_filename):
+  with open(drawed_image_filename, 'r') as f:
+    data = f.read().rstrip(',').split(',')
+    coords_data = []
+    for i in data:
+	    coords_data.append(i.split(' '))
+    
+    new_coords_data = []
+    min_w_value = 10**12
+    max_w_value = 0
+    min_h_value = 10**12
+    max_h_value = 0
+    counter = 1
+
+    for i in range(len(coords_data)):
+      for j in range(len(coords_data[i])):
+        new_coords_data.append(int(coords_data[i][j]))
+        if counter%2 == 0:
+          if new_coords_data[-1] > max_h_value:
+            max_h_value = new_coords_data[-1]
+          if new_coords_data[-1] < min_h_value:
+            min_h_value = new_coords_data[-1]
+        else:
+          if new_coords_data[-1] > max_w_value:
+            max_w_value = new_coords_data[-1]
+          if new_coords_data[-1] < min_w_value:
+            min_w_value = new_coords_data[-1]     
+        
+        counter+=1
+      
+    image = generate_empty_image(max_w_value,max_h_value)
+    
+    x_array = []
+    y_array = []
+    for i in range(len(new_coords_data)):
+      if i%2 == 0:
+        x_array.append(new_coords_data[i])
+      else:
+        y_array.append(new_coords_data[i])
+    
+    print(x_array, y_array)
+    for i in range(len(x_array)):
+      image[y_array[i]-1][x_array[i]-1] = 1
+      
+      
+
+    return image
+
+def max_image_w_value(image):
+  return len(image[0])
   
-  
+
+def max_image_h_value(image):
+  return len(image)
+    
+    
 def main():
-  openimagefile('image.txt', 10)
-  save_image(generate_empty_image(50, 20), 'image2.txt')
-  save_image(openimagefile('image2.txt', 50), 'image3.txt')
-  draw_image_file('image4.txt', 500, 650, 650)
+  # openimagefile('image.txt', 10)
+  # save_image(generate_empty_image(50, 20), 'image2.txt')
+  # save_image(openimagefile('image2.txt', 50), 'image3.txt')
+  # draw_image_file('image4.txt', 500, 650, 650)
   paint_image()
+  save_image(extract_image_from_painted_image('positions.txt'), 'image6.txt')
+  draw_image_file('image6.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
+  
 
 if __name__ == '__main__':
   main()
