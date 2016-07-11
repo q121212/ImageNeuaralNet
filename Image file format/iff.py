@@ -255,6 +255,7 @@ def main():
   # save_image_with_metadata(extract_image_from_painted_image('positions.txt'),max_image_w_value(extract_image_from_painted_image('positions.txt')),'imagewithmeta.txt')
   # extract_image_from_image_with_metadata('imagewithmeta.txt')
   # extract_image_width_from_image_with_metadata('imagewithmeta.txt')
+  pass
 
 if __name__ == '__main__':
   main()
