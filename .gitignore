@@ -4,3 +4,4 @@ Image file format/positions.txt
 Image file format/image7.txt
 Image file format/imagewithmeta.txt
 *__pycache__
+*.pyc
