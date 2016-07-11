@@ -100,12 +100,44 @@ def draw_image_file(filename, image_width, canvas_width = 500, canvas_height = 5
         w.create_oval(j,i,j,i)
   mainloop()    
 
- 
+
+def paint_image(canvas_width = 500, canvas_height = 500):
+  with open('positions.txt', 'w') as f:
+    f.close()
+    def paint_pixel_for_image( event ):
+      with open('positions.txt', 'a') as f:
+        python_green = "#476042"
+        x, y = ( event.x ), ( event.y )
+        w.create_oval( x, y, x, y, fill = python_green )
+        result = [x, y]
+        print(result)
+        f.write(str(result[0]) + ' ' + str(result[1]) + ',')
+        return result
+  master = Tk()
+  master.title( "Painting canvas" )
+  w = Canvas(master, 
+             width=canvas_width, 
+             height=canvas_height)
+  w.pack(expand = YES, fill = BOTH)
+  arr = []
+  w.bind( "<B1-Motion>", paint_pixel_for_image )
+
+  message = Label( master, text = "Press and Drag the mouse to draw" )
+  message.pack( side = BOTTOM )
+      
+  mainloop()
+
+  
+def extract_image_from_painted_image():
+  pass
+  
+  
 def main():
   openimagefile('image.txt', 10)
   save_image(generate_empty_image(50, 20), 'image2.txt')
   save_image(openimagefile('image2.txt', 50), 'image3.txt')
   draw_image_file('image4.txt', 500, 650, 650)
+  paint_image()
 
 if __name__ == '__main__':
   main()
