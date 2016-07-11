@@ -26,6 +26,11 @@
 # [0,0,0,0,0,0,0,0,0,0],
 # [0,0,0,0,0,0,0,0,0,0]]
 
+'''Image file format library.'''
+
+__author__ = 'q121212@gmail.com (Max R.)'
+
+
 # Lybraries import part
 try:
   from tkinter import *
