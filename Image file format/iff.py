@@ -27,7 +27,12 @@
 # [0,0,0,0,0,0,0,0,0,0]]
 
 # Lybraries import part
-from tkinter import *
+try:
+  from tkinter import *
+except ImportError:
+  print('Tkinter library is not available.')
+  exit(0)
+
 
 def transponse(data, width):
   '''A function do transponse from single-order list to double-order list. 
@@ -254,7 +259,7 @@ def main():
   # draw_image_file('image7.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
   # save_image_with_metadata(extract_image_from_painted_image('positions.txt'),max_image_w_value(extract_image_from_painted_image('positions.txt')),'imagewithmeta.txt')
   # extract_image_from_image_with_metadata('imagewithmeta.txt')
-  # extract_image_width_from_image_with_metadata('imagewithmeta.txt')
+  extract_image_width_from_image_with_metadata('imagewithmeta.txt')
   pass
 
 if __name__ == '__main__':
