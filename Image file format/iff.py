@@ -138,7 +138,7 @@ def paint_image(canvas_width = 500, canvas_height = 500):
 
   
 def extract_image_from_painted_image(drawed_image_filename):
-  '''Method for extractin image from painted image.'''
+  '''Method for extractin image from painted image. That's method uses drawed_image (not image), i.e. positions.txt'''
 
   with open(drawed_image_filename, 'r') as f:
     data = f.read().rstrip(',').split(',')
@@ -203,6 +203,44 @@ def paint_image_and_save_to_file(filename):
   paint_image()
   save_image(extract_image_from_painted_image('positions.txt'), filename)
 
+
+
+def image_structure(image, image_width):
+  '''Method defines the current structure of image file: image_header_section|image_width|image.'''
+  image_header_section = 'imgff'
+  separator = '|'
+  image_in_str = ''
+  for i in range(len(image)):
+      for j in range(len(image[i])):
+        if i == len(image)-1 and j == len(image[i])-1:
+          image_in_str = image_in_str + str(image[i][j])
+        else:
+          image_in_str = image_in_str + str(image[i][j])+','
+          
+  result = image_header_section+separator+str(image_width)+separator+image_in_str
+  return result
+
+
+def save_image_with_metadata(image, image_width, filename):
+  '''Method for saving image from image file with metadata.'''
+  with open(filename, 'w') as f:
+    f.write(image_structure(image,image_width))
+
+
+def extract_image_from_image_with_metadata(filename):
+  '''Method for extracting image from image file with metadata.'''
+  with open(filename, 'r') as f:
+    data = f.read()
+    
+  return data.split('|')[-1]
+
+def extract_image_width_from_image_with_metadata(filename):
+  '''Method for extracting image_width from image file with metadata.'''
+  with open(filename, 'r') as f:
+    data = f.read()
+    
+  return data.split('|')[1]
+
     
 def main():
   # openimagefile('image.txt', 10)
@@ -212,8 +250,11 @@ def main():
   # paint_image()
   # save_image(extract_image_from_painted_image('positions.txt'), 'image6.txt')
   # draw_image_file('image6.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
-  paint_image_and_save_to_file('image7.txt')
-  draw_image_file('image7.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
+  # paint_image_and_save_to_file('image7.txt')
+  # draw_image_file('image7.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
+  # save_image_with_metadata(extract_image_from_painted_image('positions.txt'),max_image_w_value(extract_image_from_painted_image('positions.txt')),'imagewithmeta.txt')
+  # extract_image_from_image_with_metadata('imagewithmeta.txt')
+  # extract_image_width_from_image_with_metadata('imagewithmeta.txt')
 
 if __name__ == '__main__':
   main()
