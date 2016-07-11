@@ -29,8 +29,10 @@
 # Lybraries import part
 from tkinter import *
 
-# a function do transponse from single-order list to double-order list
 def transponse(data, width):
+  '''A function do transponse from single-order list to double-order list. 
+A func have 2 variables: data, width.'''
+
   count = 0
   new_data_line = []
   new_data = []
@@ -47,8 +49,10 @@ def transponse(data, width):
   new_data.append(new_data_line)
   return new_data
 
-      
+ 
 def openimagefile(filename, width):
+  '''Method for opening filename with a width as an image.'''
+
   with open(filename, 'r') as f:
     data = f.read()
 
@@ -62,6 +66,8 @@ def openimagefile(filename, width):
 
 
 def generate_empty_image(width, height):
+  '''Method for generation empty image with dimensions: width, height'''
+
   image = []
   for i in range(height):
     for j in range(width):
@@ -74,6 +80,8 @@ def generate_empty_image(width, height):
   return new_data
   
 def save_image(image, filename):
+  '''Method for saving image to a file with a filename.'''
+
   with open(filename, 'w') as f:
     for i in range(len(image)):
       for j in range(len(image[i])):
@@ -82,12 +90,11 @@ def save_image(image, filename):
         else:
           f.write(str(image[i][j])+',')
   print('A file was written as: ' + filename)
-
-def image_view(image):
-  pass
   
   
 def draw_image_file(filename, image_width, canvas_width = 500, canvas_height = 500):
+  '''Method foк showing/displaying image from file with filename. Until a image file object doesn't keep its own width, this method require a image_width, and also canvas_width and canvas_height for image displaying.'''
+
   master = Tk()
   w = Canvas(master, 
              width=canvas_width, 
@@ -102,6 +109,8 @@ def draw_image_file(filename, image_width, canvas_width = 500, canvas_height = 5
 
 
 def paint_image(canvas_width = 500, canvas_height = 500):
+  '''Method for painting image. The dimensions of canvas (width and height) must be specified.'''
+
   with open('positions.txt', 'w') as f:
     f.close()
     def paint_pixel_for_image( event ):
@@ -129,6 +138,8 @@ def paint_image(canvas_width = 500, canvas_height = 500):
 
   
 def extract_image_from_painted_image(drawed_image_filename):
+  '''Method for extractin image from painted image.'''
+
   with open(drawed_image_filename, 'r') as f:
     data = f.read().rstrip(',').split(',')
     coords_data = []
@@ -171,28 +182,38 @@ def extract_image_from_painted_image(drawed_image_filename):
     print(x_array, y_array)
     for i in range(len(x_array)):
       image[y_array[i]-1][x_array[i]-1] = 1
-      
-      
-
+       
     return image
 
 def max_image_w_value(image):
+  '''Method for defining a max width value of image.'''
+
   return len(image[0])
   
 
 def max_image_h_value(image):
+  '''Method for defining a max height value of image.'''
+
   return len(image)
     
+
+def paint_image_and_save_to_file(filename):
+  '''Method for painting image and save it to the file with filename.'''
+
+  paint_image()
+  save_image(extract_image_from_painted_image('positions.txt'), filename)
+
     
 def main():
   # openimagefile('image.txt', 10)
   # save_image(generate_empty_image(50, 20), 'image2.txt')
   # save_image(openimagefile('image2.txt', 50), 'image3.txt')
   # draw_image_file('image4.txt', 500, 650, 650)
-  paint_image()
-  save_image(extract_image_from_painted_image('positions.txt'), 'image6.txt')
-  draw_image_file('image6.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
-  
+  # paint_image()
+  # save_image(extract_image_from_painted_image('positions.txt'), 'image6.txt')
+  # draw_image_file('image6.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
+  paint_image_and_save_to_file('image7.txt')
+  draw_image_file('image7.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
 
 if __name__ == '__main__':
   main()
