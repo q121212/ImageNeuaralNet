@@ -117,7 +117,21 @@ def draw_image_file(filename, image_width, canvas_width = 500, canvas_height = 5
         w.create_oval(j,i,j,i)
   mainloop()    
 
+def draw_image(image, image_width, canvas_width = 500, canvas_height = 500):
+  '''Method foк showing/displaying image. Until a image file object doesn't keep its own width, this method require a image_width, and also canvas_width and canvas_height for image displaying.'''
 
+  master = Tk()
+  w = Canvas(master, 
+             width=canvas_width, 
+             height=canvas_height)
+  w.pack()
+  for i in range(len(image)):
+    for j in range(len(image[i])):
+      if image[i][j] == 1:
+        w.create_oval(j,i,j,i)
+  mainloop()    
+  
+  
 def paint_image(canvas_width = 500, canvas_height = 500):
   '''Method for painting image. The dimensions of canvas (width and height) must be specified.'''
 
@@ -241,15 +255,18 @@ def extract_image_from_image_with_metadata(filename):
   '''Method for extracting image from image file with metadata.'''
   with open(filename, 'r') as f:
     data = f.read()
-    
-  return data.split('|')[-1]
+  
+  data = data.split('|')[-1].split(',')
+  image = transponse(data, extract_image_width_from_image_with_metadata(filename))
+  return image
+
 
 def extract_image_width_from_image_with_metadata(filename):
   '''Method for extracting image_width from image file with metadata.'''
   with open(filename, 'r') as f:
     data = f.read()
     
-  return data.split('|')[1]
+  return int(data.split('|')[1])
 
     
 def main():
@@ -264,7 +281,11 @@ def main():
   # draw_image_file('image7.txt', max_image_w_value(extract_image_from_painted_image('positions.txt')),500,600)
   # save_image_with_metadata(extract_image_from_painted_image('positions.txt'),max_image_w_value(extract_image_from_painted_image('positions.txt')),'imagewithmeta.txt')
   # extract_image_from_image_with_metadata('imagewithmeta.txt')
-  extract_image_width_from_image_with_metadata('imagewithmeta.txt')
+  # extract_image_width_from_image_with_metadata('imagewithmeta.txt')
+  # save_image(extract_image_from_image_with_metadata('imagewithmeta.txt'), 'image8.txt')
+  # draw_image_file('image8.txt', extract_image_width_from_image_with_metadata('imagewithmeta.txt'), 500, 600)
+  # draw_image(extract_image_from_image_with_metadata('imagewithmeta.txt'), extract_image_width_from_image_with_metadata('imagewithmeta.txt'), 500, 600)
+
   pass
 
 if __name__ == '__main__':
