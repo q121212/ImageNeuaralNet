@@ -377,7 +377,74 @@ def draw_image_file_with_metadata(filename):
       if image[i][j] == 1:
         w.create_oval(j,i,j,i)
   mainloop()  
+
+def transform_image_to_zeroes_sequence_and_dec_number(image):
+  '''Method for transforming image to zeroes sequence and decimal number. It's used for bin to dec compression.'''
+  bin_list = transponse_two_to_one_ordered_list(image)
+  bin_sequence = ''
+  for i in bin_list:
+    bin_sequence+=str(i)
+  numbers_of_zeroes = len(bin_list)-len(bin_sequence.lstrip('0'))
+  # print('len(bin_list): {0}, len(bin_sequence): {1}, numbers_of_zeroes: {2}, bin_sequence: {3}, type(bin_sequence): {4}'.format(len(bin_list), len(bin_sequence.lstrip('0')), numbers_of_zeroes, bin_sequence, type(bin_sequence)))
+  # print(bin_sequence, type(bin_sequence))
+  dec_number = int(bin_sequence, 2)  
+  zeroes_and_dec_number = [numbers_of_zeroes, dec_number]
+  return zeroes_and_dec_number
+
+def resave_from_image_file_to_image_with_compression(source_filename, result_filename):
+  '''Method for update (resave) image file from structures iff with metadata to iff with bin_to_dec compression.'''
+  image = extract_image_from_image_with_metadata(source_filename)
+  image_width = extract_image_width_from_image_with_metadata(source_filename)
+  zeroes_and_dec_number = transform_image_to_zeroes_sequence_and_dec_number(image)
+  with open(result_filename, 'w') as f:
+    f.write(image_with_compression_structure(image,image_width))
+  print('A file {0} was resaved to {1}'.format(source_filename, result_filename))
+
+def image_with_compression_structure(image, image_width):
+  '''Method defines the current structure of image with bin_to_dec compression file: image_header_section|image_width|image_with_bin_to_dec_compression.'''
+  image_header_section = 'imgffwdc' #a decript: image file format with decimal compression
+  separator = '|'
+  zeroes_and_dec_number = transform_image_to_zeroes_sequence_and_dec_number(image)
+  image_in_str = str(zeroes_and_dec_number[0]) + ',' + str(zeroes_and_dec_number[1])
+            
+  result = image_header_section+separator+str(image_width)+separator+image_in_str
+  return result
+
+
+def extract_image_from_compressed_image_file(filename):
+  '''Method for extracting image from bin_to_dec compressed image file.'''
+  with open(filename, 'r') as f:
+    data = f.read()
   
+
+  zeroes_and_dec_number = data.split('|')[-1].split(',')
+  dec_number = zeroes_and_dec_number[1]
+  data_sequence = '0' * int(zeroes_and_dec_number[0]) + bin(int(dec_number))[2:]
+  image = transponse(data_sequence, extract_image_width_from_image_with_metadata(filename))
+  return image
+  
+  
+def draw_image_file_with_compression(filename):
+  '''Method for showing/displaying image with bin_to_dec compression.'''
+
+  image = extract_image_from_compressed_image_file(filename)
+  canvas_width = max_image_w_value(image)
+  canvas_height = max_image_h_value(image)
+  
+  master = Tk()
+  # value +50 is a random number for creating a frame (additional canvas space) for a more presentable view of image. In the future this values change to min_w_value & min_h_value (need calculate them (find where calculations are made and use it))
+  w = Canvas(master, 
+             width=canvas_width+50, 
+             height=canvas_height+50)
+  w.pack()
+  for i in range(len(image)):
+    for j in range(len(image[i])):
+      if image[i][j] == 1:
+        w.create_oval(j,i,j,i)
+  mainloop()    
+  
+  
+
   
 def main():
   # openimagefile('image.txt', 10)
@@ -397,8 +464,12 @@ def main():
   # draw_image(extract_image_from_image_with_metadata('imagewithmeta.txt'), extract_image_width_from_image_with_metadata('imagewithmeta.txt'), 500, 600)
   # paint_image_new(500, 500)
   paint_image_new_and_save_image_with_metadata('image9.txt', 500, 600)
-  draw_image_file_with_metadata('image9.txt')
-  
+  # draw_image_file_with_metadata('image9.txt')
+  # print(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt')))
+  # print(extract_(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt'))))
+  resave_from_image_file_to_image_with_compression('image9.txt', 'image10.txt')
+  print(extract_image_from_compressed_image_file('image10.txt'))
+  draw_image_file_with_compression('image10.txt')
   
   pass
 
