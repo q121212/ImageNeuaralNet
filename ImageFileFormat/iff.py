@@ -468,7 +468,7 @@ def main():
   # print(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt')))
   # print(extract_(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt'))))
   resave_from_image_file_to_image_with_compression('image9.txt', 'image10.txt')
-  print(extract_image_from_compressed_image_file('image10.txt'))
+  # print(extract_image_from_compressed_image_file('image10.txt'))
   draw_image_file_with_compression('image10.txt')
   
   pass

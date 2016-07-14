@@ -32,5 +32,14 @@ class IffTestCase(unittest.TestCase):
   def test_max_image_h_value(self):
     self.assertEqual(iff.max_image_h_value(iff.generate_empty_image(100,200)), 200)
 
+  
+  def test_transform_image_to_zeroes_sequence_and_dec_number(self):
+    self.assertEqual(iff.transform_image_to_zeroes_sequence_and_dec_number([[0,0,0,0,0],[0,1,0,1,0],[1,0,1,0,1],[1,1,1,1,1]]), [6, 10943]) 
+
+
+  def test_image_with_compression_structure(self):
+    self.assertEqual(iff.image_with_compression_structure([[0,0,0,0,0],[0,1,0,1,0],[1,0,1,0,1],[1,1,1,1,1]], 5), 'imgffwdc|5|6,10943')
+
+
 if __name__ == '__main__':
   unittest.main()
