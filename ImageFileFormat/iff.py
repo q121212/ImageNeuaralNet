@@ -445,6 +445,20 @@ def draw_image_file_with_compression(filename):
   
   
 
+def extract_image_from_file(filename, width = 1):
+  '''General method for extracting image from different files: bin file, image with metadata, image with bin_to_dec compression'''
+  
+  n = 15
+  with open(filename, 'r') as fl:
+    first_n_symbols_of_file  = fl.readlines()[0][:n]
+  
+  print(first_n_symbols_of_file)
+  if first_n_symbols_of_file.startswith('0,0' or '0,1' or '1,1'):
+    return openimagefile(filename, width)
+  elif first_n_symbols_of_file.startswith('imgff'):
+    return extract_image_from_image_with_metadata(filename)
+  elif first_n_symbols_of_file.startswith('imgffwdc'):
+    return extract_image_from_compressed_image_file(filename)  
   
 def main():
   # openimagefile('image.txt', 10)
@@ -463,14 +477,15 @@ def main():
   # draw_image_file('image8.txt', extract_image_width_from_image_with_metadata('imagewithmeta.txt'), 500, 600)
   # draw_image(extract_image_from_image_with_metadata('imagewithmeta.txt'), extract_image_width_from_image_with_metadata('imagewithmeta.txt'), 500, 600)
   # paint_image_new(500, 500)
-  paint_image_new_and_save_image_with_metadata('image9.txt', 500, 600)
+  # paint_image_new_and_save_image_with_metadata('image9.txt', 500, 600)
   # draw_image_file_with_metadata('image9.txt')
   # print(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt')))
   # print(extract_(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt'))))
-  resave_from_image_file_to_image_with_compression('image9.txt', 'image10.txt')
-  # print(extract_image_from_compressed_image_file('image10.txt'))
-  draw_image_file_with_compression('image10.txt')
-  
+  # resave_from_image_file_to_image_with_compression('image9.txt', 'image10.txt')
+  print(extract_image_from_compressed_image_file('image10.txt'))
+  # draw_image_file_with_compression('image10.txt')
+  print(extract_image_from_file('image.txt'))
+
   pass
 
 if __name__ == '__main__':
