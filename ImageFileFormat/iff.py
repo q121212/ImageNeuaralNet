@@ -133,7 +133,7 @@ def draw_image(image, image_width, canvas_width = 500, canvas_height = 500):
   
   
 def paint_image(canvas_width = 500, canvas_height = 500):
-  '''Method for painting image. The dimensions of canvas (width and height) must be specified.'''
+  '''Method for painting b\w image. The dimensions of canvas (width and height) must be specified.'''
 
   with open('positions.txt', 'w') as f:
     f.close()
@@ -282,7 +282,7 @@ def transponse_two_to_one_ordered_list(image):
   
   
 def paint_image_new(canvas_width = 500, canvas_height = 500):
-  '''New, reprocessed method for painting image (w\o 'positions.txt' file). The dimensions of canvas (width and height) must be specified.'''
+  '''New, reprocessed method for painting b\w image (w\o 'positions.txt' file). The dimensions of canvas (width and height) may be passed optionally.'''
 
   # with open('positions.txt', 'w') as f:
     # f.close()
@@ -521,44 +521,44 @@ def save_image_to_compressed_and_colors_image_file(image, image_width, filename,
   
   
 def extract_image_from_compressed_and_colors_image_file(filename):
-  '''Method for extracting image from different types of image files: uncompressed & compressed, b\w & colors.'''
-  
-  with open(filename, 'r') as f:
-    data = f.read()
-  
-  image_header = data.split('|')[0]
-  compression_type = int(data.split('|')[2])
-  colors_mode = int(data.split('|')[3])
-  # check image_header
-  try:
-    image_header == 'imgffwcac'
-  except ValueError:
-    print('An incorrect file was passed.')
-  else:
-    # check compression_type
+    '''Method for extracting image from different types of image files: uncompressed & compressed, b\w & colors.'''
+    
+    with open(filename, 'r') as f:
+      data = f.read()
+    
+    image_header = data.split('|')[0]
+    compression_type = int(data.split('|')[2])
+    colors_mode = int(data.split('|')[3])
+    # check image_header
     try:
-      compression_type in [0, 1] # 0 - an image file is uncompressed, 1 - an image file is bin_to_dec compressed
+      image_header == 'imgffwcac'
     except ValueError:
-      print('An incorrect type of file compression was passed.')
+      print('An incorrect file was passed.')
     else:
-      # check colors_mode
+      # check compression_type
       try:
-        colors_mode in [0, 1] # 0 - b/w, 1 - rgb
+        compression_type in [0, 1] # 0 - an image file is uncompressed, 1 - an image file is bin_to_dec compressed
       except ValueError:
-        print('An incorrect colors mode was passed.')
+        print('An incorrect type of file compression was passed.')
       else:
-        if compression_type == 0 and colors_mode == 0:
-          print('00')
-          return extract_image_from_image_with_metadata(filename)
-        if compression_type == 0 and colors_mode == 1:
-          print('01')
-          return extract_colored_image_from_file(filename)
-        if (compression_type == 1 and colors_mode == 0):
-          print('10')
-          return extract_image_from_compressed_image_file(filename)
-        if compression_type == 1 and colors_mode == 1:
-          print('11')
-          return extract_image_from_hex_compressed_colors_file(filename)
+        # check colors_mode
+        try:
+          colors_mode in [0, 1] # 0 - b/w, 1 - rgb
+        except ValueError:
+          print('An incorrect colors mode was passed.')
+        else:
+          if compression_type == 0 and colors_mode == 0:
+            print('00')
+            return extract_image_from_image_with_metadata(filename)
+          if compression_type == 0 and colors_mode == 1:
+            print('01')
+            return extract_colored_image_from_file(filename)
+          if (compression_type == 1 and colors_mode == 0):
+            print('10')
+            return extract_image_from_compressed_image_file(filename)
+          if compression_type == 1 and colors_mode == 1:
+            print('11')
+            return extract_image_from_hex_compressed_colors_file(filename)
 
 
 def extract_image_from_hex_compressed_colors_file(filename):
@@ -632,9 +632,76 @@ def transponse_colors(colors_list, width):
   new_data.append(new_data_list)
   return new_data
 
+
+def draw_image_from_file(filename, width = 10, canvas_width = 500, canvas_height = 600):
+  '''General method for showing\drawing  different image files.'''
+  
+  n = 15
+  with open(filename, 'r') as fl:
+    first_n_symbols_of_file  = fl.readlines()[0][:n]
+  
+  print(first_n_symbols_of_file)
+  if first_n_symbols_of_file.startswith('0,0' or '0,1' or '1,1'):
+    image = openimagefile(filename, width)
+    return draw_image(image, max_image_w_value(image), canvas_width, canvas_height)
+  elif first_n_symbols_of_file.startswith('imgffwdc'):
+    return draw_image_file_with_compression(filename)  
+  elif first_n_symbols_of_file.startswith('imgffwcac'):
+    return draw_an_image_file(filename)
+  elif first_n_symbols_of_file.startswith('imgff'):
+    return draw_image_file_with_metadata(filename)
+
     
-# def draw_colored_image(image):
-  # 
+def draw_an_image_file(filename):
+  '''Method for routing opens "imgffwcac" (image with comresson and colored) files. '''
+  with open(filename, 'r') as f:
+    data = f.read()
+  
+  image_header = data.split('|')[0]
+  compression_type = int(data.split('|')[2])
+  colors_mode = int(data.split('|')[3])
+  # check image_header
+  try:
+    image_header == 'imgffwcac'
+  except ValueError:
+    print('An incorrect file was passed.')
+  else:
+    # check compression_type
+    try:
+      compression_type in [0, 1] # 0 - an image file is uncompressed, 1 - an image file is bin_to_dec compressed
+    except ValueError:
+      print('An incorrect type of file compression was passed.')
+    else:
+      # check colors_mode
+      try:
+        colors_mode in [0, 1] # 0 - b/w, 1 - rgb
+      except ValueError:
+        print('An incorrect colors mode was passed.')
+      else:
+        if compression_type == 0 and colors_mode == 0:
+          return draw_image_file_with_metadata(filename)
+        if compression_type == 0 and colors_mode == 1:
+          return draw_image_file_with_compression_and_colors(filename)
+        if (compression_type == 1 and colors_mode == 0):
+          return draw_colored_image_file(filename)
+        if compression_type == 1 and colors_mode == 1:
+          return draw_colored_image_file(filename)
+          
+
+def draw_colored_image_file(filename):
+  '''Method for drawing\showing colored image file (uncompressed and hex compressed).'''
+  
+  image = extract_image_from_file(filename)
+  with open(filename, 'r') as f:
+    data = f.read()
+  
+  compression_type = int(data.split('|')[2])
+  if compression_type == 0: # uncompressed image
+    
+    pass
+  elif compression_type == 1: #hex compressed image
+    pass
+  
           
 def main():
   # openimagefile('image.txt', 10)
@@ -668,18 +735,34 @@ def main():
   # image2 = extract_image_from_compressed_and_colors_image_file('image11.txt')
   # draw_image(image2, max_image_w_value)
   # print(image_file_structure_with_compression_and_colors([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]]], 3, 0, 1))
-  save_image_to_compressed_and_colors_image_file([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]], max_image_w_value([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]]), 'image12.txt', compression_type = 0, colors_mode = 1)
+  # save_image_to_compressed_and_colors_image_file([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]], max_image_w_value([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]]), 'image12.txt', compression_type = 0, colors_mode = 1)
   # print(extract_colored_image_from_file('image12.txt'))
   # save_image_to_compressed_and_colors_image_file(extract_colored_image_from_file('image12.txt'), max_image_w_value(extract_colored_image_from_file('image12.txt')), 'image13.txt', compression_type = 0, colors_mode = 1)
   # print(extract_colored_image_from_file('image13.txt'))
   # save_image_to_compressed_and_colors_image_file(extract_colored_image_from_file('image13.txt'), max_image_w_value(extract_colored_image_from_file('image13.txt')), 'image14.txt', compression_type = 1, colors_mode = 1)
   # print(extract_image_from_compressed_and_colors_image_file('image14.txt'))
   # save_image_to_compressed_and_colors_image_file(extract_image_from_compressed_and_colors_image_file('image14.txt'), max_image_w_value(extract_image_from_compressed_and_colors_image_file('image14.txt')), 'image15.txt', compression_type = 1, colors_mode = 1)
-  print('extract_image_from_file image12.txt {0}'.format(extract_image_from_file('image12.txt')))
-  print('extract_image_from_file image14.txt {0}'.format(extract_image_from_file('image14.txt')))
-  print('extract_image_from_compressed_and_colors_image_file image12 {0}'.format(extract_image_from_compressed_and_colors_image_file('image12.txt')))
-  print('extract_colored_image_from_file image12 {0}'.format(extract_colored_image_from_file('image12.txt')))
+  # print('extract_image_from_file image12.txt {0}'.format(extract_image_from_file('image12.txt')))
+  # print('extract_image_from_file image14.txt {0}'.format(extract_image_from_file('image14.txt')))
+  # print('extract_image_from_compressed_and_colors_image_file image12 {0}'.format(extract_image_from_compressed_and_colors_image_file('image12.txt')))
+  # print('extract_colored_image_from_file image12 {0}'.format(extract_colored_image_from_file('image12.txt')))
+  # draw_image_from_file('image.txt')
+  # draw_image_from_file('image4.txt')
+  # draw_image_from_file('image7.txt') # require width
+  # draw_image_from_file('image8.txt') # require width
+  # draw_image_from_file('image9.txt') # imgff
+  # draw_image_from_file('image10.txt') # imgffwdc
   
+  # starts from image12 - its colored files!
+  # draw_image_from_file('image12.txt')
+  # draw_image_from_file('image13.txt')
+  # draw_image_from_file('image14.txt')
+  # draw_image_from_file('image15.txt')
+  # image = paint_image_new()
+  # save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image15.txt', compression_type = 0, colors_mode = 0)
+  # draw_image_from_file('image15.txt')
+  # save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image16.txt', compression_type = 1, colors_mode = 0)
+  # draw_image_from_file('image16.txt')
   pass
 
 if __name__ == '__main__':
