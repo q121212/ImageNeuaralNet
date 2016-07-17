@@ -444,7 +444,7 @@ def draw_image_file_with_compression(filename):
 
 
 def extract_image_from_file(filename, width = 1):
-  '''General method for extracting image from different files: bin file, image with metadata, image with bin_to_dec compression'''
+  '''General method for extracting image from different files: bin file, image with metadata, image with bin_to_dec compression, colored image with and w\o compression.'''
   
   n = 15
   with open(filename, 'r') as fl:
@@ -453,13 +453,12 @@ def extract_image_from_file(filename, width = 1):
   print(first_n_symbols_of_file)
   if first_n_symbols_of_file.startswith('0,0' or '0,1' or '1,1'):
     return openimagefile(filename, width)
-  elif first_n_symbols_of_file.startswith('imgff'):
-    return extract_image_from_image_with_metadata(filename)
   elif first_n_symbols_of_file.startswith('imgffwdc'):
     return extract_image_from_compressed_image_file(filename)  
   elif first_n_symbols_of_file.startswith('imgffwcac'):
     return extract_image_from_compressed_and_colors_image_file(filename)
-
+  elif first_n_symbols_of_file.startswith('imgff'):
+    return extract_image_from_image_with_metadata(filename)
 
 def image_file_structure_with_compression_and_colors(image, image_width, compression_type, colors_mode):
   '''Method defines the current structure of image fiel with different types of compression and different modes of colors: image_header_section|image_width|compression type|colors mode|data.'''
@@ -478,40 +477,51 @@ def image_file_structure_with_compression_and_colors(image, image_width, compres
   # compression = no, colors = rgb
   if compression_type == 0 and colors_mode == 1:
     #structure of rgb-colored non-compressed image: one pixel is [r,g,b], two pixels: [[r1,g1,b1],[r2,g2,b2]], image: [[[r1,g1,b1], [r2,g2,b2]], [[r3,g3,b3],[r4,g4,b4]]], for example: [[[0,1,2],[3,4,5]], [[6,7,8],[9,10,11]]]
-    image_data = ''
-    for i in range(len(image)):
-      for j in range(len(image[i])):
-        colors = image[i][j]
-        hex_colors = ''
-        for e in colors:
-          hex_colors+=hex(int(e))
-        image_data+=hex_colors
-    
-
-    pass
-    #image_data = 
+    image_data = transponse_colors_image_to_hex_list(image)
+    print('image_data {0}'.format(image_data))
     
   # compression = bin_to_dec, colors = b\w
   if compression_type == 1 and colors_mode == 0:
     zeroes_and_dec_number = transform_image_to_zeroes_sequence_and_dec_number(image)
     image_data = str(zeroes_and_dec_number[0]) + ',' + str(zeroes_and_dec_number[1])
     
-  # compression = bin_to_dec, colors = rgb
+  # compression = dec_to_hex, colors = rgb
   if compression_type == 1 and colors_mode == 1:
-    pass
-    #image_data = 
-            
+    colors_list = transponse_colors_image_to_hex_list(image)
+    image_data = ''
+    for i in colors_list.split('0x'):
+      image_data += i + ','
+    
+    image_data = image_data[:-1]
   result = image_header_section + separator + str(image_width) + separator + str(compression_type) + separator + str(colors_mode) + separator + image_data
   return result
 
+  
+def transponse_colors_image_to_hex_list(image):
+  '''Method for transponsing dec image colors to hex image colors.'''
+  hex_list_colors = ''
+  for i in range(len(image)):
+    for j in range(len(image[i])):
+      colors = image[i][j]
+      hex_colors = ''
+      for e in colors:
+        hex_colors+=hex(int(e))
+        
+      hex_list_colors += hex_colors
+  
+  return hex_list_colors
+
+
 
 def save_image_to_compressed_and_colors_image_file(image, image_width, filename, compression_type = 1, colors_mode = 0):
+  '''Save image file with using image_file_structure_with_compression_and_colors. Default params: compression_type = 1, colors_mode = 0. For using different ones need to specify them specially.'''
+  
   with open(filename, 'w') as f:
     f.write(image_file_structure_with_compression_and_colors(image, image_width, compression_type, colors_mode))
   
   
 def extract_image_from_compressed_and_colors_image_file(filename):
-  '''Method for extracting image from compressed and colors image file.'''
+  '''Method for extracting image from different types of image files: uncompressed & compressed, b\w & colors.'''
   
   with open(filename, 'r') as f:
     data = f.read()
@@ -538,13 +548,34 @@ def extract_image_from_compressed_and_colors_image_file(filename):
         print('An incorrect colors mode was passed.')
       else:
         if compression_type == 0 and colors_mode == 0:
+          print('00')
           return extract_image_from_image_with_metadata(filename)
         if compression_type == 0 and colors_mode == 1:
-          extract_colored_image_from_file(filename)
+          print('01')
+          return extract_colored_image_from_file(filename)
         if (compression_type == 1 and colors_mode == 0):
+          print('10')
           return extract_image_from_compressed_image_file(filename)
         if compression_type == 1 and colors_mode == 1:
-          pass
+          print('11')
+          return extract_image_from_hex_compressed_colors_file(filename)
+
+
+def extract_image_from_hex_compressed_colors_file(filename):
+  '''Method for extracting image from dec_to_hex compressed colors image file.'''
+  with open(filename, 'r') as f:
+    data = f.read()
+  
+  image_width = int(data.split('|')[1])
+  dec_colors_list = []
+  hex_numbers = data.split('|')[-1].split(',')[1:]
+  for i in hex_numbers:
+    dec_colors_list.append(int(i, 16))
+  
+  image = transponse_colors(transponse_colors(dec_colors_list, 3), image_width)
+  return image
+
+
 
 def draw_image_file_with_compression_and_colors(filename):
   '''Method for showing/displaying b\w image with bin_to_dec compression.'''
@@ -576,36 +607,34 @@ def extract_colored_image_from_file(filename):
   dec_colors_list = []
   for i in colors_list:
     dec_colors_list.append(int(i, 16))
-  image = transponse_colors(transponse_colors(dec_colors_list, 3), image_width)
-  # dec_number = zeroes_and_dec_number[1]
-  # data_sequence = '0' * int(zeroes_and_dec_number[0]) + bin(int(dec_number))[2:]
-  # image = transponse(data_sequence, extract_image_width_from_image_with_metadata(filename))
+
+  image = transponse_colors(dec_colors_list, 3)
+  image = transponse_colors(image, image_width)
   return image
     
 
 def transponse_colors(colors_list, width):
-  '''A function do transponse from single-order list of colors to double-order list of colors. 
-A func have 2 variables: data, width.'''
+  '''A function do transponse from single-order list of colors to double-order list of colors. A func have 2 variables: data, width.'''
 
   count = 0
-  new_data_line = []
+  new_data_list = []
   new_data = []
   for i in colors_list:
     if count < width:
-      new_data_line.append(i)
+      new_data_list.append(i)
       count+=1
     else:
-      new_data.append(new_data_line)
-      new_data_line = []
-      new_data_line.append(i)
+      new_data.append(new_data_list)
+      new_data_list = []
+      new_data_list.append(i)
       count=1
     
-  new_data.append(new_data_line)
+  new_data.append(new_data_list)
   return new_data
 
     
 # def draw_colored_image(image):
-  # [[0,1,2,3],[4,5,6,7],[8,9,10,11]]
+  # 
           
 def main():
   # openimagefile('image.txt', 10)
@@ -639,11 +668,17 @@ def main():
   # image2 = extract_image_from_compressed_and_colors_image_file('image11.txt')
   # draw_image(image2, max_image_w_value)
   # print(image_file_structure_with_compression_and_colors([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]]], 3, 0, 1))
-  # save_image_to_compressed_and_colors_image_file([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]], max_image_w_value([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]]), 'image12.txt', compression_type = 0, colors_mode = 1)
-  print(extract_colored_image_from_file('image12.txt'))
-  save_image_to_compressed_and_colors_image_file(extract_colored_image_from_file('image12.txt'), max_image_w_value(extract_colored_image_from_file('image12.txt')), 'image13.txt', compression_type = 0, colors_mode = 1)
-  print(extract_colored_image_from_file('image13.txt'))
-
+  save_image_to_compressed_and_colors_image_file([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]], max_image_w_value([[[0,1,2],[3,4,5],[6,7,8]],[[9,10,11],[12,13,14],[15,16,17]],[[18,19,20],[21,22,23],[24,25,26]],[[27,28,29],[30,31,32],[33,34,35]]]), 'image12.txt', compression_type = 0, colors_mode = 1)
+  # print(extract_colored_image_from_file('image12.txt'))
+  # save_image_to_compressed_and_colors_image_file(extract_colored_image_from_file('image12.txt'), max_image_w_value(extract_colored_image_from_file('image12.txt')), 'image13.txt', compression_type = 0, colors_mode = 1)
+  # print(extract_colored_image_from_file('image13.txt'))
+  # save_image_to_compressed_and_colors_image_file(extract_colored_image_from_file('image13.txt'), max_image_w_value(extract_colored_image_from_file('image13.txt')), 'image14.txt', compression_type = 1, colors_mode = 1)
+  # print(extract_image_from_compressed_and_colors_image_file('image14.txt'))
+  # save_image_to_compressed_and_colors_image_file(extract_image_from_compressed_and_colors_image_file('image14.txt'), max_image_w_value(extract_image_from_compressed_and_colors_image_file('image14.txt')), 'image15.txt', compression_type = 1, colors_mode = 1)
+  print('extract_image_from_file image12.txt {0}'.format(extract_image_from_file('image12.txt')))
+  print('extract_image_from_file image14.txt {0}'.format(extract_image_from_file('image14.txt')))
+  print('extract_image_from_compressed_and_colors_image_file image12 {0}'.format(extract_image_from_compressed_and_colors_image_file('image12.txt')))
+  print('extract_colored_image_from_file image12 {0}'.format(extract_colored_image_from_file('image12.txt')))
   
   pass
 
