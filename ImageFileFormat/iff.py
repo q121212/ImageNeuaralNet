@@ -416,7 +416,6 @@ def extract_image_from_compressed_image_file(filename):
   with open(filename, 'r') as f:
     data = f.read()
   
-
   zeroes_and_dec_number = data.split('|')[-1].split(',')
   dec_number = zeroes_and_dec_number[1]
   data_sequence = '0' * int(zeroes_and_dec_number[0]) + bin(int(dec_number))[2:]
@@ -459,7 +458,100 @@ def extract_image_from_file(filename, width = 1):
     return extract_image_from_image_with_metadata(filename)
   elif first_n_symbols_of_file.startswith('imgffwdc'):
     return extract_image_from_compressed_image_file(filename)  
+  elif first_n_symbols_of_file.startswith('imgffwcac'):
+    return extract_image_from_compressed_and_colors_image_file(filename)
+
+
+def image_file_structure_with_compression_and_colors(image, image_width, compression_type, colors_mode):
+  '''Method defines the current structure of image fiel with different types of compression and different modes of colors: image_header_section|image_width|compression type|colors mode|data.'''
+  image_header_section = 'imgffwcac' #a decript: image file format with compression and colors
+  separator = '|'
+  # compression = no, colors = b\w
+  if compression_type == 0 and colors_mode == 0:
+    pass
+    #image_data = 
+    
+  # compression = no, colors = grayscale
+  if compression_type == 0 and colors_mode == 1:
+    pass
+    #image_data = 
+    
+  # compression = bin_to_dec, colors = b\w
+  if compression_type == 1 and colors_mode == 0:
+    zeroes_and_dec_number = transform_image_to_zeroes_sequence_and_dec_number(image)
+    image_data = str(zeroes_and_dec_number[0]) + ',' + str(zeroes_and_dec_number[1])
+    
+  # compression = bin_to_dec, colors = grayscale
+  if compression_type == 1 and (colors_mode == 1 or colors_mode == 256):
+    pass
+    #image_data = 
+            
+  result = image_header_section + separator + str(image_width) + separator + str(compression_type) + separator + str(colors_mode) + separator + image_data
+  return result
+
+
+def save_image_to_compressed_and_colors_image_file(image, image_width, filename, compression_type = 1, colors_mode = 0):
+  with open(filename, 'w') as f:
+    f.write(image_file_structure_with_compression_and_colors(image, image_width, compression_type, colors_mode))
   
+  
+def extract_image_from_compressed_and_colors_image_file(filename):
+  '''Method for extracting image from compressed and colors image file.'''
+  
+  with open(filename, 'r') as f:
+    data = f.read()
+  
+  image_header = data.split('|')[0]
+  compression_type = int(data.split('|')[2])
+  colors_mode = int(data.split('|')[3])
+  # check image_header
+  try:
+    image_header == 'imgffwcac'
+  except ValueError:
+    print('An incorrect file was passed.')
+  else:
+    # check compression_type
+    try:
+      compression_type in [0, 1] # 0 - an image file is uncompressed, 1 - an image file is bin_to_dec compressed
+    except ValueError:
+      print('An incorrect type of file compression was passed.')
+    else:
+      # check colors_mode
+      try:
+        colors_mode in [0, 1] # 0 - b/w, 1 - grayscale
+      except ValueError:
+        print('An incorrect colors mode was passed.')
+      else:
+        if compression_type == 0 and colors_mode == 0:
+          return extract_image_from_image_with_metadata(filename)
+        if compression_type == 0 and colors_mode == 1:
+          pass
+        if (compression_type == 1 and colors_mode == 0):
+          return extract_image_from_compressed_image_file(filename)
+        if compression_type == 1 and colors_mode == 1:
+          pass
+
+def draw_image_file_with_compression_and_colors(filename):
+  '''Method for showing/displaying image with bin_to_dec compression.'''
+
+  image = extract_image_from_compressed_and_colors_image_file(filename)
+  canvas_width = max_image_w_value(image)
+  canvas_height = max_image_h_value(image)
+  print(canvas_width, canvas_height)
+  
+  master = Tk()
+  # value +50 is a random number for creating a frame (additional canvas space) for a more presentable view of image. In the future this values change to min_w_value & min_h_value (need calculate them (find where calculations are made and use it))
+  w = Canvas(master, 
+             width=canvas_width+50, 
+             height=canvas_height+50)
+  w.pack()
+  for i in range(len(image)):
+    for j in range(len(image[i])):
+      if image[i][j] == 1:
+        w.create_oval(j,i,j,i)
+  mainloop()    
+
+          
 def main():
   # openimagefile('image.txt', 10)
   # save_image(generate_empty_image(50, 20), 'image2.txt')
@@ -482,10 +574,16 @@ def main():
   # print(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt')))
   # print(extract_(transform_image_to_zeroes_sequence_and_dec_number(extract_image_from_image_with_metadata('image9.txt'))))
   # resave_from_image_file_to_image_with_compression('image9.txt', 'image10.txt')
-  print(extract_image_from_compressed_image_file('image10.txt'))
+  # print(extract_image_from_compressed_image_file('image10.txt'))
   # draw_image_file_with_compression('image10.txt')
-  print(extract_image_from_file('image.txt'))
-
+  # draw_image_file_with_metadata(extract_image_from_file('image10.txt'))
+  # draw_image_file_with_compression('image10.txt')
+  image = paint_image_new()
+  save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image11.txt')
+  draw_image_file_with_compression_and_colors('image11.txt')
+  image2 = extract_image_from_compressed_and_colors_image_file('image11.txt')
+  draw_image(image2, max_image_w_value)
+  
   pass
 
 if __name__ == '__main__':
