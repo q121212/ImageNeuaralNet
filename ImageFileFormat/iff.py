@@ -25,6 +25,7 @@
 # [0,0,0,0,0,0,0,0,0,0],
 # [0,0,0,0,0,0,0,0,0,0],
 # [0,0,0,0,0,0,0,0,0,0]]
+# Current iff structure was extended a iff header block!!
 
 '''Image file format library.'''
 
@@ -696,11 +697,17 @@ def draw_colored_image_file(filename):
     data = f.read()
   
   compression_type = int(data.split('|')[2])
+  colors_mode = int(data.split('|')[3])
   if compression_type == 0: # uncompressed image
-    
-    pass
+    if colors_mode == 0:
+      pass 
+    elif colors_mode == 1:
+      pass
   elif compression_type == 1: #hex compressed image
-    pass
+    if colors_mode == 0:
+      draw_image_file_with_compression(filename) 
+    elif colors_mode == 1:
+      pass
   
           
 def main():
@@ -758,11 +765,11 @@ def main():
   # draw_image_from_file('image13.txt')
   # draw_image_from_file('image14.txt')
   # draw_image_from_file('image15.txt')
-  # image = paint_image_new()
+  image = paint_image_new()
   # save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image15.txt', compression_type = 0, colors_mode = 0)
   # draw_image_from_file('image15.txt')
-  # save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image16.txt', compression_type = 1, colors_mode = 0)
-  # draw_image_from_file('image16.txt')
+  save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image16.txt', compression_type = 0, colors_mode = 0)
+  draw_image_from_file('image16.txt')
   pass
 
 if __name__ == '__main__':
