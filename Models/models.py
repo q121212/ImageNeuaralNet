@@ -59,20 +59,75 @@ def extract_sign_from_images(sign):
     image = iff.extract_image_from_file(path_to_imagefile)
 
     # Below is 2 diagnostic lines
-    print(path_to_imagefile)
-    iff.draw_image(image, iff.max_image_w_value(image))
+    # print(path_to_imagefile)
+    # iff.draw_image(image, iff.max_image_w_value(image))
 
     list_of_images_and_their_widths.append([image, iff.max_image_w_value(image)]) # this list have the next format: [[image0, width0],[image1, width1]..]
-    
+
+  images_width = []  
   for i in range(len(list_of_images_and_their_widths)):
-    generalizing_image.append(list_of_images_and_their_widths[i][1])
+    images_width.append(list_of_images_and_their_widths[i][1])
+  
+  average_width = int(sum(images_width)/len(images_width))
 
   # The following two methods that I need to write:
   # bring_images_to_common_width
   # search_a_common_in_images
-    
+  
+  ####resize_image###
+  image = list_of_images_and_their_widths[0][0]
+  image_width = list_of_images_and_their_widths[0][1]
+  new_image_width = average_width
+  print('new_image_width {0}'.format(new_image_width))
+
+  new_image = []
+  if image_width == new_image_width:
+    return image
+
+  else:
+    aspect_ratio = new_image_width / image_width
+    width_difference = new_image_width - image_width
+    print('width_difference {0}, new_image_width {1}, image_width {2}'.format(width_difference, new_image_width, image_width))
+    if aspect_ratio >= 10:
+      for i in range(len(image)):
+        for j in range(len(image[i])):
+          for e in range(int(aspect_ratio)):
+            new_image.append(((str(image[i][j])+' ')*int(aspect_ratio)).split(' ')[:-1])
+      #new_image*aspect_ratio
+    elif 2<aspect_ratio<10:
+      pass
+      # new_image*
+    else:
+      for i in range(len(image)):
+        counter = 0
+        ctr=0
+        for j in range(len(image[i])):
+          if counter % (width_difference-1) == 0:
+            new_image.append(image[i][j])
+            new_image.append(image[i][j])
+            counter+=1
+            ctr+=1
+            # print(ctr)
+          else:
+            new_image.append(str(image[i][j]))
+            counter+=1
+
+      pass
+  
+  new_image = iff.transponse(new_image, new_image_width)
+  print(len(new_image[0]))
+  iff.draw_image(new_image, iff.max_image_w_value(new_image))
+  print(aspect_ratio)
+  ###################  
   return generalizing_image
 
+
+def resize_image(image, image_width, new_image_width):
+  pass
+
+
+def search_a_common_in_images(image1, image2):
+  pass
 
 if __name__ == '__main__':
   # model_paint_a_sign(1, 4)
