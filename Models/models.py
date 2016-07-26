@@ -84,7 +84,7 @@ def extract_sign_from_images(sign):
       pass
     else:
       print('new_image_width {0}'.format(new_image_width))
-      new_image = resize_image(image, image_width, new_image_width)
+      new_image = fake_resize_image(image, image_width, new_image_width)
       print(len(new_image[0]))
       iff.draw_image(new_image, iff.max_image_w_value(new_image))
   
@@ -92,7 +92,7 @@ def extract_sign_from_images(sign):
   return generalizing_image
 
 
-def resize_image(image, image_width, new_image_width):
+def fake_resize_image(image, image_width, new_image_width):
   new_image = []
   if image_width == new_image_width:
     return image
