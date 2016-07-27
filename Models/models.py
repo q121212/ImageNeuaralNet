@@ -182,7 +182,7 @@ if __name__ == '__main__':
   # model_paint_a_sign(2, 4)
   # model_paint_a_sign('a', 4)
   # model_paint_a_sign('b', 4)
-  model_paint_a_sign('minus', 0)
+  model_paint_a_sign('plus', 1)
   # view_a_gallery_of_sign('1')
   # extract_sign_from_images('1')                    # extracting a generalizing image from all of sign images and save it to ./general_image/image{sign}.iff
   # iff.draw_image_from_file('./general_images/image1.iff') # drawing a generalizing image (summ of all sign image. in this case drawing generalizing image for '1' sign
