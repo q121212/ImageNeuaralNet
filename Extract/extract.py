@@ -12,7 +12,7 @@ import iff
 import models
 
 def extract_a_one_pixel_width_line_segments(filename):
-  
+  '''Method should extract list of lists of line segments (horizontal, vertical and diagonal) segments with length 2 and more pixels.'''
   image = iff.extract_image_from_file(filename)
   
   'There are only three variants of line segment placement are possible: in horisontal line, vertical line and diagonal line. And, also in the each line can contain multiple segments'
@@ -46,10 +46,12 @@ def extract_a_one_pixel_width_line_segments(filename):
   
 
   # receiving horizontal_line_segments from horizontal_lines_of_image
-  print('Horizontal lines segments: {0}'.format(line_segments(horizontal_lines_of_image))) #looks right
+  horizontal_lines_segments = line_segments(horizontal_lines_of_image)
+  print('Horizontal lines segments: {0}'.format(horizontal_lines_segments)) #looks right
 
   # for method1 calculation of vertical_lines_of_image
-  print('Vertical lines segments: {0}'.format(line_segments(vertical_lines_of_image))) # in vertical case: (WARNING: need to check calculation and result correctness!!!!!!!)
+  vertical_lines_segments = line_segments(vertical_lines_of_image)
+  print('Vertical lines segments: {0}'.format(vertical_lines_segments)) # in vertical case: (WARNING: need to check calculation and result correctness!!!!!!!)
   
   # for method2 calculation of vertical_lines_of_image
   print('Vertical lines segments: {0}'.format(line_segments(new_image))) #Thats result was culculated for rotated to 90 degrees image. In fact thats cant used in ordinary way for drawing this segments. This segments need to rotate again to normal image!!!!!!!
@@ -60,11 +62,12 @@ def extract_a_one_pixel_width_line_segments(filename):
   iff.draw_image(vertical_lines_of_image, len(vertical_lines_of_image[0]))
   # iff.draw_image(new_image, len(new_image[0])) # draw result image for calculation vertical_lines_of_image with method2
 
-  a_line = []
+  a_line = [horizontal_line_segments, vertical_lines_segments]
   return a_line
 
 def line_segments(lines_of_image): 
-  # receiving line_segments from lines_of_image
+  '''Receiving line_segments from lines_of_image'''
+  
   line_segments = []
   segments = []
   
@@ -97,10 +100,12 @@ def line_segments(lines_of_image):
 
 
 def add_line_segments_to_image(line_segments, image):
+  '''Method for concantenation the image with line_segments to one image.'''
   pass
 
 
 def draw_line_segments(line_segments):
+  '''Method for drawing line_segments.'''
   pass
 
 if __name__ == '__main__':
