@@ -18,8 +18,12 @@ def model_paint_a_sign(sign, n):
     os.mkdir(current_path) # create a folder, called as a sign
   except:
     pass
-
-  additional_i = int(os.listdir(current_path)[-1][5:-4])
+  try:
+    additional_i = int(os.listdir(current_path)[-1][5:-4])
+    if additional_i == 0:
+      additional_i+=1
+  except:
+    additional_i = 0
   for i in range(n+1):
     print('You need paint the next sign: {0}'.format(sign)) # message for painter
     image = iff.paint_image_new()
@@ -98,7 +102,7 @@ def extract_sign_from_images(sign):
     generalizing_image = concantenate_of_two_images(list_of_new_images[i+2], generalizing_image)
     iff.draw_image(generalizing_image, len(generalizing_image[0])) 
   save_result_image(generalizing_image, sign)
-  return 'Was created and saved generalized image for sign: {0}'.format(sign)
+  return print('Was created and saved generalized image for sign: {0}'.format(sign))
 
 
 def fake_resize_image(image, image_width, new_image_width):
@@ -178,8 +182,9 @@ if __name__ == '__main__':
   # model_paint_a_sign(2, 4)
   # model_paint_a_sign('a', 4)
   # model_paint_a_sign('b', 4)
+  model_paint_a_sign('minus', 0)
   # view_a_gallery_of_sign('1')
-  print(extract_sign_from_images('1'))                    # extracting a generalizing image from all of sign images and save it to ./general_image/image{sign}.iff
-  iff.draw_image_from_file('./general_images/image1.iff') # drawing a generalizing image (summ of all sign image. in this case drawing generalizing image for '1' sign
+  # extract_sign_from_images('1')                    # extracting a generalizing image from all of sign images and save it to ./general_image/image{sign}.iff
+  # iff.draw_image_from_file('./general_images/image1.iff') # drawing a generalizing image (summ of all sign image. in this case drawing generalizing image for '1' sign
 
   pass
