@@ -46,7 +46,7 @@ def view_a_gallery_of_sign(sign, numbers_of_sign_examples=10, starts_with = 0):
 
 
 def extract_sign_from_images(sign):
-  
+  '''Method for creating generalized image from image files with the sign.'''
   current_path = os.path.abspath(os.path.join('.', str(sign)))
   number_of_files = int(os.listdir(current_path)[-1][5:-4]) #extract index of last image file in the sign_image folder
   
@@ -77,6 +77,7 @@ def extract_sign_from_images(sign):
   
   ####resize_image###
   new_image_width = average_width
+  list_of_new_images = []
   for i in range(len(list_of_images_and_their_widths)):
     image = list_of_images_and_their_widths[i][0]
     image_width = list_of_images_and_their_widths[i][1]
@@ -87,12 +88,21 @@ def extract_sign_from_images(sign):
       new_image = fake_resize_image(image, image_width, new_image_width)
       print(len(new_image[0]))
       iff.draw_image(new_image, iff.max_image_w_value(new_image))
+      list_of_new_images.append(new_image)
+      # iff.save_image_to_compressed_and_colors_image_file(new_image, iff.max_image_w_value(new_image), path_to_imagefile, compression_type = 1, colors_mode = 0)
   
   ###################  
-  return generalizing_image
+  # using search_a_common_in_images method (in current version - will be used concantenate_of_two_images:
+  generalizing_image = concantenate_of_two_images(list_of_new_images[0], list_of_new_images[1])
+  for i in range(len(list_of_new_images[:-2])):
+    generalizing_image = concantenate_of_two_images(list_of_new_images[i+2], generalizing_image)
+    iff.draw_image(generalizing_image, len(generalizing_image[0])) 
+  save_result_image(generalizing_image, sign)
+  return 'Was created and saved generalized image for sign: {0}'.format(sign)
 
 
 def fake_resize_image(image, image_width, new_image_width):
+  '''Method for fakimg_resize image by width.'''
   new_image = []
   if image_width == new_image_width:
     return image
@@ -126,7 +136,42 @@ def fake_resize_image(image, image_width, new_image_width):
 
 
 def search_a_common_in_images(image1, image2):
-  pass
+  '''Method must extract only common pixels from two different images and retur the one imageю'''
+  return image2
+
+
+def concantenate_of_two_images(image1, image2):
+  '''Method for concantenating two images to one image.'''
+  if len(image1) > len(image2):
+    pass
+  else:
+    image1, image2 = image2, image1
+
+  list_for_new_image = []
+  for i in range(len(image2)):
+    for j in range(len(image2[0])):
+      if image1[i][j] == 1:
+        list_for_new_image.append(image1[i][j])
+      else:
+        if image2[i][j] == 1:
+          list_for_new_image.append(image2[i][j])
+        else:
+          list_for_new_image.append(image2[i][j])
+  new_image = []
+  new_image = iff.transponse(list_for_new_image, len(image1[0]))
+  print('concantenated image has width: {0} x height: {1}'.format(len(new_image[0]), len(new_image)))
+  # iff.draw_image(new_image, len(image1[0]))
+  return new_image
+
+
+def save_result_image(image, sign):
+  '''Save generalizing image to ./general_images folder with image{sign}.iff filaname.'''
+  current_path = os.path.abspath(os.path.join('.', str('general_images/')))
+  
+  afilename = 'image' + str(sign) + '.iff'
+  path_to_imagefile = os.path.join(current_path, afilename)
+  image = iff.save_image_to_compressed_and_colors_image_file(image, len(image[0]), path_to_imagefile, compression_type = 1, colors_mode = 0)
+
 
 if __name__ == '__main__':
   # model_paint_a_sign(1, 4)
@@ -134,6 +179,7 @@ if __name__ == '__main__':
   # model_paint_a_sign('a', 4)
   # model_paint_a_sign('b', 4)
   # view_a_gallery_of_sign('1')
-  print(extract_sign_from_images('b'))
+  print(extract_sign_from_images('1'))                    # extracting a generalizing image from all of sign images and save it to ./general_image/image{sign}.iff
+  iff.draw_image_from_file('./general_images/image1.iff') # drawing a generalizing image (summ of all sign image. in this case drawing generalizing image for '1' sign
 
   pass
