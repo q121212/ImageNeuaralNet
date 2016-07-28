@@ -75,7 +75,7 @@ def extract_a_one_pixel_width_line_segments(filename):
 
   a_line = [horizontal_lines_segments, vertical_lines_segments]
 
-  print(extract_a_primitive(image, [[1,1,1]]))
+  print(extract_a_primitive(image, [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]))
   print(extract_a_primitive(vertical_lines_of_image, [[1,1]]))
   return a_line
 
@@ -151,10 +151,10 @@ def extract_a_primitive(image, primitive):
   list_of_primitives_positions = []
 
   if appropriate_field[0] < 0:
-    print('Width of primitive is more than width of image!')
+    print('Width of primitive ({0}) is more than width of image!'.format(primitive))
     quit()
   if appropriate_field[1] < 0:
-    print('Height of primitive is more than height of image!')
+    print('Height of primitive ({0}) is more than height of image!'.format(primitive))
     quit()
   for i in range(appropriate_field[0]):
     for j in range(appropriate_field[1]):
