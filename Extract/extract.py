@@ -131,9 +131,9 @@ def extract_a_primitive(image, primitive):
   #   image:       movable_window:
   #     (I)          (Template)
   #                    m = 2
-  #      ----->
+  #      ----->        __
   #    j (w) = 5   n=1|__|
-  #
+  #      _____
   # | 4 |     |     In this case,
   # |(h)|     |    template is [[1,1]], i.e.
   # | i |     |    is a 2 px segment
