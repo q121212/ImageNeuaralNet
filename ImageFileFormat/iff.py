@@ -32,7 +32,7 @@
 __author__ = 'q121212@gmail.com (Max R.)'
 
 
-# Lybraries import part
+# Libraries import part
 try:
   from tkinter import *
 except ImportError:
@@ -765,13 +765,11 @@ def main():
   # draw_image_from_file('image13.txt')
   # draw_image_from_file('image14.txt')
   # draw_image_from_file('image15.txt')
-  # image = paint_image_new()
+  image = paint_image_new()
   # save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image15.txt', compression_type = 0, colors_mode = 0)
   # draw_image_from_file('image15.txt')
-  # save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image16.txt', compression_type = 0, colors_mode = 0)
-  # draw_image_from_file('image16.txt')
-  draw_image_from_file('../Models/2/image0.iff')
-  print(max_image_h_value(extract_image_from_compressed_and_colors_image_file('../Models/2/image1.iff')))
+  save_image_to_compressed_and_colors_image_file(image, max_image_w_value(image), 'image16.txt', compression_type = 0, colors_mode = 0)
+  draw_image_from_file('image16.txt')
   pass
 
 if __name__ == '__main__':

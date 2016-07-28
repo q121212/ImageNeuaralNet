@@ -43,7 +43,18 @@ def extract_a_one_pixel_width_line_segments(filename):
   # calculating diagonal_lines_of_image
   # need to write!!!
   diagonal_lines_of_image = []
-  
+  image_height = len(image)
+  image_width = len(image[0]) 
+  for i in range(image_height):
+    for j in range(image_width):
+      if i == 0 and j == 0:
+        pass
+      elif i == j:
+        diagonal_lines_of_image.append([image[i][0], image[0][j]])
+      # elif i >= j and i-j>=0:
+      #   diagonal_lines_of_image.append([image[i][0], image[0][j]])
+      # elif i < j:
+      #   diagonal_lines_of_image.append([image[i][0], image[0][j]])
 
   # receiving horizontal_line_segments from horizontal_lines_of_image
   horizontal_lines_segments = line_segments(horizontal_lines_of_image)
@@ -62,7 +73,10 @@ def extract_a_one_pixel_width_line_segments(filename):
   iff.draw_image(vertical_lines_of_image, len(vertical_lines_of_image[0]))
   # iff.draw_image(new_image, len(new_image[0])) # draw result image for calculation vertical_lines_of_image with method2
 
-  a_line = [horizontal_line_segments, vertical_lines_segments]
+  a_line = [horizontal_lines_segments, vertical_lines_segments]
+
+  print(extract_a_primitive(image, [[1,1,1]]))
+  print(extract_a_primitive(vertical_lines_of_image, [[1,1]]))
   return a_line
 
 def line_segments(lines_of_image): 
@@ -107,6 +121,57 @@ def add_line_segments_to_image(line_segments, image):
 def draw_line_segments(line_segments):
   '''Method for drawing line_segments.'''
   pass
+
+
+def extract_a_primitive(image, primitive):
+  '''Abstract method for serch and extract an elements (primitives) from image.'''
+  
+  # primitive must be defined as list of lists. For example: [[1,1]] - a minimus segment with 2 pixels on placed on one line; [[0,1],[1,1]] - is a corner like this: _| placed on two lines.
+  #
+  #   image:       movable_window:
+  #     (I)          (Template)
+  #                    m = 2
+  #      ----->
+  #    j (w) = 5   n=1|__|
+  #
+  # | 4 |     |     In this case,
+  # |(h)|     |    template is [[1,1]], i.e.
+  # | i |     |    is a 2 px segment
+  # |   |_____|
+  # V
+
+  # First step of the method is - define an appropriate field (x*y) for Template (primitive) in Image.
+  image_width = iff.max_image_w_value(image)
+  image_height = iff.max_image_h_value(image)
+  primitive_width = iff.max_image_w_value(primitive)
+  primitive_height = iff.max_image_h_value(primitive)
+  appropriate_field = [image_width - (primitive_width - 1), image_height - (primitive_height -1)]
+  # print('image_width {0}, image_height {1}, primitive_width {2}, primitive_height {3}, appropriate_filed {4}'.format(image_width, image_height, primitive_width, primitive_height, appropriate_field))
+
+  list_of_primitives_positions = []
+
+  if appropriate_field[0] < 0:
+    print('Width of primitive is more than width of image!')
+    quit()
+  if appropriate_field[1] < 0:
+    print('Height of primitive is more than height of image!')
+    quit()
+  for i in range(appropriate_field[0]):
+    for j in range(appropriate_field[1]):
+      counter = 0
+      primitive_positions = []
+      for k in range(primitive_width):
+        for l in range(primitive_height):
+          # print('i: {0},j; {1},k: {2},l: {3}'.format(i,j,k,l))
+          if image[j+l][i+k] == primitive[l][k]:
+            counter+=1
+            primitive_positions.append([i+k,j+l])
+            if counter == primitive_width * primitive_height:
+              list_of_primitives_positions.append(primitive_positions)
+
+  return list_of_primitives_positions
+
+   
 
 if __name__ == '__main__':
   # extract_a_one_pixel_width_line_segments('image1.iff')
