@@ -9,7 +9,7 @@ sys.path.insert(0, lib_path)
 import iff
 
 def model_paint_a_sign(sign, n):
-  '''Method for painting n times a sign. This method is designed speccially to create/painting a models database of sign.'''
+  '''Method for painting n times a sign. This method is designed specially to create/painting a models database of sign.'''
 
   current_path = os.path.abspath(os.path.join('.', str(sign)))
   
@@ -145,7 +145,7 @@ def search_a_common_in_images(image1, image2):
 
 
 def concantenate_of_two_images(image1, image2):
-  '''Method for concantenating two images to one image.'''
+  '''Method for concantenating two images to one image with using overlay method.'''
   if len(image1) > len(image2):
     pass
   else:
