@@ -18,6 +18,7 @@ import extract
 
 
 def create_test_image():
+  '''Method for creating test image and saving it to current folder with custom filename.'''
   image = iff.paint_image_new()
   current_path = os.path.abspath('.')
   print(os.listdir(current_path))
@@ -84,7 +85,7 @@ def horiz_summation(image_left, image_right):
 
 
 def vert_summation(image_top, image_bottom):
-  '''Method for creating horizontal summation of left and right images in the one.'''
+  '''Method for creating vertical summation of top and bottom images in the one.'''
   image_top_w_value  = iff.max_image_w_value(image_top)
   image_bottom_w_value = iff.max_image_w_value(image_bottom)
   image_top_h_value  = iff.max_image_h_value(image_top)
