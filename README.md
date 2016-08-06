@@ -7,3 +7,5 @@ When IFF part will be implemented to some extent, I will come back to develop th
 Models folder is a part of project for creating iconic images and storing handled images and image's galleries for different sign for ImageNeuralNet. For learning this network in future.
 
 Extract folder is a module for extracting different objects from images. Currently is being developed by the implementation of the extraction of segments.
+
+Transform folder is a module for simple transformation of images, like horizontal and vertical summation, etc.

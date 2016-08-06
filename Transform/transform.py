@@ -58,8 +58,9 @@ def horiz_summation(image_left, image_right):
     new_h_value = image_left_h_value
   else:
     new_h_value = image_right_h_value
-  print(new_w_value, new_h_value)
+  # print(new_w_value, new_h_value)
 
+  print('Creating horiz. summation image...')
   result_image = iff.generate_empty_image(image_left_w_value+image_right_w_value, new_h_value)
   for i in range(len(image_left)):
     for j in range(len(image_left[i])):
@@ -68,6 +69,9 @@ def horiz_summation(image_left, image_right):
   for i in range(len(image_right)):
     for j in range(len(image_right[i])):
       result_image[i][j+image_left_w_value] = image_right[i][j]
+
+  # The old, not work well and right alg for horiz_transform:
+  #
   # for i in range(new_h_value):
   #   if i < image_left_h_value:
   #     left_part  = image_left[i]
@@ -85,7 +89,7 @@ def horiz_summation(image_left, image_right):
 
 
 def vert_summation(image_top, image_bottom):
-  '''Method for creating vertical summation of top and bottom images in the one.'''
+  '''Method for creating vertical summation of top and bottom` images in the one.'''
   image_top_w_value  = iff.max_image_w_value(image_top)
   image_bottom_w_value = iff.max_image_w_value(image_bottom)
   image_top_h_value  = iff.max_image_h_value(image_top)
@@ -100,8 +104,9 @@ def vert_summation(image_top, image_bottom):
     new_h_value = image_top_h_value
   else:
     new_h_value = image_bottom_h_value
-  print(new_w_value, new_h_value)
+  # print(new_w_value, new_h_value)
 
+  print('Creating vert. summation image...')
   result_image = iff.generate_empty_image(new_w_value, image_top_h_value+image_bottom_h_value)
   for i in range(len(image_top)):
     for j in range(len(image_top[i])):
