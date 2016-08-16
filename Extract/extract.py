@@ -180,6 +180,7 @@ if __name__ == '__main__':
   # extract_a_one_pixel_width_line_segments('imageplus.iff')
   extract_a_one_pixel_width_line_segments('imageplus3.iff')
   # extract_a_one_pixel_width_line_segments('imageplus4.iff')
+  print(extract_a_primitive(iff.extract_image_from_file('imageplus3.iff'), [[1,0]]))
 
 
   pass
