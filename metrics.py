@@ -28,7 +28,9 @@ import transform
 
 ############# First-order metrics #############
 
-### Metrics for corners elements
+### Metrics for detecting the presence of different types of elements in image ###
+
+###### Metrics for corners elements ######
 
 def weight_calculation(image, list_of_primitives):
   '''This method calculates the weight. 
@@ -70,14 +72,15 @@ def amount_corners_weight(image):
   print('Amount of corners for every type of primitives are the next: {0}'.format(amount_of_corners))
   return amount_of_corners
 
+###### Metrics for lines elements ######
 
-### Metrics for detecting the presence of different types of elements in image
+### Metrics for defining relative length of image elements ###
 
-### Metrics for defining relative length of image elements
+### Metrics to determine the mutual arrangement the elements ###
 
 
 ############# Second-order metrics  #############
-## Metrics made from First-order metrics
+### Metrics made from First-order metrics ###
 
 if __name__ == '__main__':
   #  
