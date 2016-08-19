@@ -18,22 +18,23 @@ import iff
 import models
 import extract
 import transform
+import metrics
 import weights
 
 def neuron_corner(path_to_images_folder):
   '''A handler for images from corner perspective.'''
   
-  wghts = []
+  metrics_ = []
   for i in sorted(os.listdir(path_to_images_folder)):
     image = iff.extract_image_from_file(os.path.join(path_to_images_folder, i))
-    wghts.append([i, weights.amount_corners_weight(image)])
+    metrics_.append([i, metrics.amount_corners_weight(image)])
   
-  non_zeroes_wghts = []
-  for i in wghts:
+  non_zeroes_metrics = []
+  for i in metrics_:
     if i[1] != [0,0,0,0,0]:
-      non_zeroes_wghts.append(i)
-  print('Non zeroes weight corner for reviewed images are the next: {0}'.format(non_zeroes_wghts))
-  return wghts 
+      non_zeroes_metrics.append(i)
+  print('Non zeroes corner metrics for reviewed images are the next: {0}'.format(non_zeroes_metrics))
+  return metrics_ 
 
 def normalization(neuron_output):
   pass
