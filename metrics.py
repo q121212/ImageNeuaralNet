@@ -4,6 +4,7 @@
 '''
 This file defines methods for calculation main metrics for images.
 Then this metrics need to recalculate in weights for different purposes and finally: metrics + thier weights need to use for neuron's calculations.
+Metrics - is a fundamental characteristics of images from different perspectives.
 '''
 
 import sys, os
@@ -23,6 +24,11 @@ import iff
 import models
 import extract
 import transform
+
+
+############# First-order metrics #############
+
+### Metrics for corners elements
 
 def weight_calculation(image, list_of_primitives):
   '''This method calculates the weight. 
@@ -63,6 +69,15 @@ def amount_corners_weight(image):
     amount_of_corners.append(len(extract.extract_a_primitive(image, list_of_primitives[i])))
   print('Amount of corners for every type of primitives are the next: {0}'.format(amount_of_corners))
   return amount_of_corners
+
+
+### Metrics for detecting the presence of different types of elements in image
+
+### Metrics for defining relative length of image elements
+
+
+############# Second-order metrics  #############
+## Metrics made from First-order metrics
 
 if __name__ == '__main__':
   #  
