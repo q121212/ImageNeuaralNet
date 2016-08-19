@@ -173,14 +173,109 @@ def extract_a_primitive(image, primitive):
   print('List of primitives positions after extraction: {0}'.format(list_of_primitives_positions)) 
   return list_of_primitives_positions
 
-   
+
+def image_from_positions(list_of_positions):
+  '''This method create an image from list of previously extracted positions of primitives or borders, etc.'''
+  
+  w_coords, h_coords = [], []
+  for i in list_of_positions:
+    w_coords.append(i[0]-1)
+    h_coords.append(i[1]-1)
+
+  # print(w_coords, '\n', h_coords)
+  width = max(w_coords)
+  height = max(h_coords)
+
+  image = iff.generate_empty_image(width, height)
+  for i in range(height):
+    for j in range(width):
+      for k in range(len(w_coords)):
+        if h_coords[k] == i:
+          if w_coords[k] == j:
+            image[i][j] = 1
+            # print(i,j)
+            # print(h_coords[k], w_coords[k])
+        else:
+          if image[i][j] == 1:
+            pass
+          else: 
+            image[i][j] = 0 
+  # print(image)
+  return image
+
+def extract_a_border(image):
+  '''Method for extracting a borders from image.'''
+  
+  list_of_border_positions = []
+
+  for i in range(len(image)):
+    for j in range(len(image[i])):
+      if image[i][j] == 1:
+        counter = 0
+        try:
+          if image[i-1][j-1] == 1:
+            counter += 1
+        except:
+          pass
+        try:
+          if image[i-1][j] == 1:
+            counter += 1
+        except:
+          pass
+        try:
+          if image[i-1][j+1] == 1:
+            counter += 1
+        except:
+          pass
+        try:
+          if image[i][j-1] == 1:
+            counter += 1
+        except:
+          pass
+        try:
+          if image[i][j+1] == 1:
+            counter +=1
+        except:
+          pass
+        try:
+          if image[i+1][j-1] == 1:
+            counter +=1
+        except:
+          pass
+        try:
+          if image[i+1][j] == 1:
+            counter +=1
+        except:
+          pass
+        try:
+          if image[i+1][j+1] == 1:
+            counter +=1
+        except:
+          pass
+
+        print('counter:  {0}'.format(counter))
+        if counter == 8:
+          pass
+        else:
+          list_of_border_positions.append([j,i])
+
+  print('Was extracted the borders from image.')
+  print('List of border positions after extraction: {0}'.format(list_of_border_positions)) 
+  return list_of_border_positions
+
 
 if __name__ == '__main__':
   # extract_a_one_pixel_width_line_segments('image1.iff')
   # extract_a_one_pixel_width_line_segments('imageplus.iff')
-  extract_a_one_pixel_width_line_segments('imageplus3.iff')
+  # extract_a_one_pixel_width_line_segments('imageplus3.iff')
   # extract_a_one_pixel_width_line_segments('imageplus4.iff')
-  print(extract_a_primitive(iff.extract_image_from_file('imageplus3.iff'), [[1,0]]))
+  # extract_a_primitive(iff.extract_image_from_file('imageplus3.iff'), primitive = [[1,0]])
 
+  iff.draw_image_from_file('image_for_border_extraction.iff')
+  list_of_border_positions = extract_a_border(iff.extract_image_from_file('image_for_border_extraction.iff'))
+  image = image_from_positions(list_of_border_positions)
+  iff.draw_image(image, iff.max_image_w_value(image))
+  iff.save_image_to_compressed_and_colors_image_file(image, iff.max_image_w_value(image), 'image2.iff', compression_type = 0, colors_mode = 0)
+  iff.draw_image_from_file('image2.iff')
 
   pass
