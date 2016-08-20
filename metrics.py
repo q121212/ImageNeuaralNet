@@ -73,6 +73,18 @@ def amount_corners_weight(image):
   return amount_of_corners
 
 ###### Metrics for lines elements ######
+def amount_lines(path_to_image):
+  
+  lines = extract.extract_a_one_pixel_width_line_segments(path_to_image)
+  size_lines, length_of_lines = [], []
+  for i in lines:
+    size_lines.append(len(i))
+    for j in i:
+      length_of_lines.append(j[2])
+  
+  print(length_of_lines)
+  print('Amount of horizontal and vertical lines in image are respectively, the next: {0}'.format(size_lines))
+  return size_lines 
 
 ### Metrics for defining relative length of image elements ###
 
@@ -89,6 +101,6 @@ if __name__ == '__main__':
   # corner_primitives_weight(path_to_image)
   image = iff.extract_image_from_file(path_to_image)
   amount_corners_weight(image)
-
+  amount_lines(path_to_image)
 
   pass
